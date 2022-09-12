@@ -221,9 +221,23 @@ if(1){
 
 # define the coordinate framework for the image
 # Plot the true eigenimages
+dimage = 300
+K = 3
 x_co = c(0,seq(dimage))
 y_co = c(0,seq(dimage))
-par(mfrow = c(3,K),mar=c(3,3,3,3),oma=c(3,3,3,3))
+
+# true eigenvectors
+eivec = array(0,c(K,dimage*dimage))
+for(j in 1:K){
+  atemp = array(0,dim = c(dimage,dimage))
+  a1 = dimage/K; c1 = c(1:a1)
+  if(j == 1){ atemp[c1,c1] = 1; eivec[j,] = c(atemp) }
+  if(j == 2){ atemp[c1+a1,c1+a1]     = 1; eivec[j,] = c(atemp) }
+  if(j == 3){ atemp[c1+2*a1,c1+2*a1] = 1; eivec[j,] = c(atemp) }
+}
+eivec1 = eivec
+
+par(mfrow = c(1,3),mar=c(3,3,3,3),oma=c(3,3,3,3))
 nam1  = c(expression(paste("Eigenimage ",psi[1](v))),
           expression(paste("Eigenimage ",psi[2](v))),
           expression(paste("Eigenimage ",psi[3](v))))
@@ -234,10 +248,10 @@ nam2  = c(expression(paste("Eigenimage ",hat(psi)[1](v))),
 # true eigenimages
 for(jj in 1:K){
   # This is to standarize the eigenimage
-  eivec[jj,] = eivec[jj,]/sqrt(sum(eivec[jj,]^2))
+  eivec1[jj,] = eivec[jj,]/sqrt(sum(eivec[jj,]^2))
   # draw the eigenimage
   if(1){
-    a1_temp = matrix(eivec[jj,],ncol = dimage, byrow = F)
+    a1_temp = matrix(eivec1[jj,],ncol = dimage, byrow = F)
     image(x_co,y_co,a1_temp,axes = F, col = grey(seq(1,0,length = 256)),xlab = "",ylab = "")
     axis(1,at = seq(0,dimage,by = dimage/3))
     axis(2,at = seq(0,dimage,by = dimage/3))
@@ -245,20 +259,21 @@ for(jj in 1:K){
     box()
   }
 }
+
 # estimated eigenimages
-for(jj in 1:K){
-  # This is to standarize the eigenimage
-  eivec[jj,] = eivec[jj,]/sqrt(sum(eivec[jj,]^2))
-  # draw the eigenimage
-  if(1){
-    a1_temp = matrix(eivec[jj,],ncol = dimage, byrow = F)
-    image(x_co,y_co,a1_temp,axes = F, col = grey(seq(1,0,length = 256)),xlab = "",ylab = "")
-    axis(1,at = seq(0,dimage,by = dimage/3))
-    axis(2,at = seq(0,dimage,by = dimage/3))
-    title(main = nam2[jj])
-    box()
-  }
-}
+# for(jj in 1:K){
+#   # This is to standarize the eigenimage
+#   esteivec[jj,] = esteivec[jj,]/sqrt(sum(esteivec[jj,]^2))
+#   # draw the eigenimage
+#   if(1){
+#     a1_temp = matrix(esteivec[jj,],ncol = dimage, byrow = F)
+#     image(x_co,y_co,a1_temp,axes = F, col = grey(seq(1,0,length = 256)),xlab = "",ylab = "")
+#     axis(1,at = seq(0,dimage,by = dimage/3))
+#     axis(2,at = seq(0,dimage,by = dimage/3))
+#     title(main = nam2[jj])
+#     box()
+#   }
+# }
 
 ## verify the estimated eigenscore and the real
 #par( mfrow = c(1,3) )
@@ -270,6 +285,37 @@ for(j in 1:3){
   abline(0,1,col = "Red")
 }
 
+
+# plot of sample Xi(v), Xj(v), Xk(v)
+set.seed(1)
+Xscore = array(0, dim = c(3,3))
+Xv     = t(eivec)
+varr   = 0.5^((1:3) - 1)
+for(i in 1:3){
+  for(j in 1:3){
+    Xscore[i,j] = floor(rnorm(1, 0, sd = varr[j])*100)/100
+  }
+  Xv[,i] = Xscore[i,1]*eivec[1,]+Xscore[i,2]*eivec[2,]+Xscore[i,3]*eivec[3,]
+}
+
+fnor = function(x){
+  m1 = min(x)
+  m2 = max(x)
+  return((x-m1)/(m2-m1))
+}
+
+nam3  = c(expression(paste("Sample ",X[i](v))),
+          expression(paste("Sample ",X[j](v))),
+          expression(paste("Sample ",X[k](v))))
+# par(mfrow = c(1,3))
+for(jj in 1:K){
+  a1_temp = matrix(fnor(Xv[,jj]),ncol = dimage, byrow = F)
+  image(x_co,y_co,a1_temp,axes = F, col = grey(seq(1,0,length = 256)),xlab = "",ylab = "")
+  axis(1,at = seq(0,dimage,by = dimage/3))
+  axis(2,at = seq(0,dimage,by = dimage/3))
+  title(main = nam3[jj])
+  box()
+}
 
 
 # define the true gamma function
