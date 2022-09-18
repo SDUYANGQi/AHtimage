@@ -3,7 +3,7 @@
 
 Most important things!!!!!!!!!!!
 
-Please make sure the results are stored in one file and the result analysis reads from the correct result storage file!!!!!!!!!
+Please make sure the results are stored in one folder and the result analysis reads from the correct result storage folder!!!!!!!!!
 
 
 For Simulation 1:
