@@ -81,8 +81,8 @@ if(1){
     rms     = array(NA, 5)
     a1 = finv(fvec(gamma1)/10)
     a2 = finv(fvec(gamma2)/10)
-    a1[1:10,1:10]  = a2[1:10,1:10]  =  max(range)
-    a1[11:20,1:10] = a2[11:20,1:10] =  min(range)
+    #a1[1:10,1:10]  = a2[1:10,1:10]  =  0.15
+    #a1[11:20,1:10] = a2[11:20,1:10] =  -0.15
     fplot1(a1, nam = expression(tilde(X)[1](v)))
     fplot1(a2, nam = expression(tilde(X)[2](v)))
     
